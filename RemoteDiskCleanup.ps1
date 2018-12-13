@@ -1,30 +1,27 @@
-﻿
+﻿# Name: RemoteDiskCleanup.ps1                              
+# Creator: Myrianthi                
+# CreationDate: 11.26.2018                             
+# LastModified: 12.13.2018                               
+# Version: 2.2
+# Doc: https://github.com/Myrianthi/remotediskcleanup
+# Purpose: Remote-access bloatware removal and temp file cleanup
+# Requirements: Admin access, PS-Remoting enabled on remote computers
+# Version 2.2 - NEW: Remove-Bloatware Function
+#
 
-
-# Purpose:       Remote-access Temp file cleanup
-# Requirements:  Admin access, PS-Remoting enabled
-# Author:        Myrianthi
-# Version:       2.1
-
-
-
-
-# --------------------------- Program begins here --------------------------- #
-
-
+# --------------------------- Script begins here --------------------------- #
 
 #Requires -RunAsAdministrator
-
-set-executionpolicy remotesigned
+Set-ExecutionPolicy RemoteSigned
 
 # This will check all Disk Cleanup boxes by manually setting each key in the following registry path to 2.
 # Comment out the files that you do not want Disk Cleanup to erase.
 $SageSet = "StateFlags0099"
 $StateFlags= "Stateflags0099"
 $Base = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\"
-$VolCaches = gci "HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches"
+$VolCaches = Get-ChildItem "HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches"
 
-$Locations= @(
+$Locations = @(
     "Active Setup Temp Folders"
     "BranchCache"
     "Downloaded Program Files"
@@ -59,6 +56,61 @@ $Locations= @(
     "Windows ESD installation files"
     "Windows Upgrade Log Files"
 )
+
+# Comment out the apps that you do not want this script to remove.
+$AppList = @(
+    "*Microsoft.3dbuilder*"
+    "*AdobeSystemsIncorporated.AdobePhotoshopExpress*"
+    "*Microsoft.WindowsAlarms*"
+    "*Microsoft.Asphalt8Airborne*"
+    "*microsoft.windowscommunicationsapps*"
+    "*Microsoft.WindowsCamera*"
+    "*king.com.CandyCrushSodaSaga*"
+    "*Microsoft.DrawboardPDF*"
+    "*Facebook*"
+    "*BethesdaSoftworks.FalloutShelter*"
+    "*FarmVille2CountryEscape*"
+    "*Microsoft.WindowsFeedbackHub*"
+    "*Microsoft.GetHelp*"
+    "*Microsoft.Getstarted*"
+    "*Microsoft.ZuneMusic*"
+    "*Microsoft.WindowsMaps*"
+    "*Microsoft.Messaging"
+    "*Microsoft.Wallet*"
+    "*Microsoft.MicrosoftSolitaireCollection*"
+    "*Todos*"
+    "*ConnectivityStore*"
+    "*MinecraftUWP*"
+    "*Microsoft.OneConnect*"
+    "*Microsoft.BingFinance*"
+    "*Microsoft.ZuneVideo*"
+    "*Microsoft.BingNews*"
+    "*Microsoft.MicrosoftOfficeHub*"
+    "*Netflix*"
+    "*OneNote*"
+    #"*Microsoft.MSPaint*"
+    "*PandoraMediaInc*"
+    "*Microsoft.People*"
+    "*CommsPhone*"
+    "*windowsphone*"
+    "*Microsoft.Print3D*"
+    "*flaregamesGmbH.RoyalRevolt2*" 
+    "*WindowsScan*"
+    "*AutodeskSketchBook*"
+    "*Microsoft.SkypeApp*"
+    "*bingsports*"
+    "*Office.Sway*"
+    "*Microsoft.Getstarted*"
+    "*Microsoft3DViewer*"
+    "*Microsoft.WindowsSoundRecorder*"
+    "*Microsoft.BingWeather*"
+    "*Microsoft.XboxApp*"
+    "*XboxOneSmartGlass*"
+    "*Microsoft.XboxSpeechToTextOverlay*"
+    "*Microsoft.XboxIdentityProvider*"
+    "*Microsoft.XboxGameOverlay*"
+)
+
 
 Function Get-Recyclebin{
     [CmdletBinding()]
@@ -288,7 +340,7 @@ Function Run-CleanMGR{
 
     If($ComputerOBJ.PSRemoting -eq $true){
         Write-Host "Attempting to Run Windows Disk Cleanup With Parameters..." -ForegroundColor Yellow
-        Write-Host "`tApplying $sageset parameters to registry path:" -ForegroundColor Yellow
+        Write-Host "`tApplying $sageset parameters to registry path:"
         Write-Host "`t$Base"
         $CleanMGR = Invoke-command -ComputerName $ComputerOBJ.ComputerName -ScriptBlock {
                         $ErrorActionPreference = 'Stop'
@@ -334,7 +386,7 @@ Function Run-CleanMGR{
     Else{
 
         Write-Host "Attempting to Run Windows Disk Cleanup With Parameters..." -ForegroundColor Yellow
-        Write-Host "`tApplying $sageset parameters to registry path:" -ForegroundColor Yellow
+        Write-Host "`tApplying $sageset parameters to registry path:"
         Write-Host "`t$Base"
         Echo ""
         $ErrorActionPreference = 'Stop'
@@ -381,7 +433,7 @@ Function Erase-IExplorerHistory{
     )
 
     If($ComputerOBJ.PSRemoting -eq $true){
-        Write-Host "Attempting to Erase Internet Explorer Browsing History" -ForegroundColor Yellow
+        Write-Host "Attempting to Erase Internet Explorer temp data" -ForegroundColor Yellow
         $CleanIExplorer = Invoke-command -ComputerName $ComputerOBJ.ComputerName -ScriptBlock {
                         $ErrorActionPreference = 'Stop'
                         Try{
@@ -396,26 +448,77 @@ Function Erase-IExplorerHistory{
                     } -Credential $ComputerOBJ.Credential
 
         If($CleanIExplorer -eq $True){
-            Write-Host "Internet Explorer History has been Successfully Erased." -ForegroundColor Green
+            Write-Host "Internet Explorer temp data has been successfully erased" -ForegroundColor Green
         }
         Else{
-            Write-host "Clean Internet Explorer Browsing History FAILED..." -ForegroundColor Red
+            Write-host "Failed to erase Internet Explorer temp data" -ForegroundColor Red
         }
     }
     Else{
 
-        Write-Host "Attempting to Erase Internet Explorer Browsing History" -ForegroundColor Yellow
+        Write-Host "Attempting to Erase Internet Explorer temp data" -ForegroundColor Yellow
         $ErrorActionPreference = 'Stop'
         Try{
             Start-Process -FilePath rundll32.exe -ArgumentList 'inetcpl.cpl,ClearMyTracksByProcess 4351' -Wait -NoNewWindow
-            Write-Host "Internet Explorer History has been Successfully Erased." -ForegroundColor Green
+            Write-Host "Internet Explorer temp data has been successfully erased" -ForegroundColor Green
         }
         Catch [System.Exception]{
-          Write-host "Clean Internet Explorer Browsing History FAILED..." -ForegroundColor Red
+          Write-host "Failed to erase Internet Explorer temp data" -ForegroundColor Red
         }
         $ErrorActionPreference = 'SilentlyContinue'
     }
 }
+
+
+Function Remove-Bloatware{
+
+    Param
+    (
+        $ComputerOBJ
+    )
+
+    If($ComputerOBJ.PSRemoting -eq $true){
+        Write-Host "Attempting to remove bloatware" -ForegroundColor Yellow
+        $removebloatware = Invoke-command -ComputerName $ComputerOBJ.ComputerName -ScriptBlock {
+                        $ErrorActionPreference = 'Stop'
+                        Try{
+			                foreach ($App in $AppList) {
+    			                Get-AppxPackage -Name $App | Remove-AppxPackage -ErrorAction SilentlyContinue
+			                }
+                            $ErrorActionPreference = 'SilentlyContinue'
+                            #Write-Output $true
+                        }
+                        Catch [System.Exception]{
+                            $ErrorActionPreference = 'SilentlyContinue'
+                            #Write-output $False
+                        }
+                    } -Credential $ComputerOBJ.Credential
+
+        If($removebloatware -eq $True){
+            Write-Host "Bloatware has been successfully removed" -ForegroundColor Green
+        }
+        Else{
+            Write-host "Failed to remove bloatware" -ForegroundColor Red
+        }
+    }
+    Else{
+
+        Write-Host "Attempting to remove bloatware" -ForegroundColor Yellow
+        $ErrorActionPreference = 'Stop'
+        Try{
+            foreach ($App in $AppList) {
+	            Get-AppxPackage -Name $App | Remove-AppxPackage -ErrorAction SilentlyContinue
+	        }
+            Write-Host "Bloatware has been successfully removed" -ForegroundColor Green
+        }
+        Catch [System.Exception]{
+          Write-host "Failed to remove bloatware" -ForegroundColor Red
+        }
+        $ErrorActionPreference = 'SilentlyContinue'
+    }
+}
+
+
 
 
 # Windows computer cleanup tool
@@ -423,7 +526,7 @@ Function Erase-IExplorerHistory{
 
 Clear-Host
 
-Echo "  **This tool will attempt to erase your computers temp files across all user profiles. Please use with caution.**"
+Echo "  **This tool will attempt to remove bloatware and erase temp files across all user profiles. Please use with caution.**"
 Echo ""
 
 $ComputerOBJ = Get-ComputerName
@@ -498,6 +601,8 @@ Echo ""
 Run-CleanMGR -ComputerOBJ $ComputerOBJ
 Echo ""
 Erase-IExplorerHistory -ComputerOBJ $ComputerOBJ
+Echo ""
+Remove-Bloatware -ComputerOBJ $ComputerOBJ
 Echo ""
 Get-Recyclebin -ComputerOBJ $ComputerOBJ
 Echo ""
