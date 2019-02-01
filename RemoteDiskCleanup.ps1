@@ -1,12 +1,11 @@
-﻿# Name: RemoteDiskCleanup.ps1                              
+# Name: RemoteDiskCleanup.ps1                              
 # Creator: Myrianthi                
 # CreationDate: 11.26.2018                             
-# LastModified: 12.13.2018                               
-# Version: 2.2
+# LastModified: 2.1.2019                               
+# Version: 2.3
 # Doc: https://github.com/Myrianthi/remotediskcleanup
-# Purpose: Remote-access bloatware removal and temp file cleanup
-# Requirements: Admin access, PS-Remoting enabled on remote computers
-# Version 2.2 - NEW: Remove-Bloatware Function
+# Purpose: Remote-access temp file removal
+# Requirements: Admin access, PS-Remoting enabled on remote devices
 #
 
 # --------------------------- Script begins here --------------------------- #
@@ -56,61 +55,6 @@ $Locations = @(
     "Windows ESD installation files"
     "Windows Upgrade Log Files"
 )
-
-# Comment out the apps that you do not want this script to remove.
-$AppList = @(
-    "*Microsoft.3dbuilder*"
-    "*AdobeSystemsIncorporated.AdobePhotoshopExpress*"
-    "*Microsoft.WindowsAlarms*"
-    "*Microsoft.Asphalt8Airborne*"
-    "*microsoft.windowscommunicationsapps*"
-    "*Microsoft.WindowsCamera*"
-    "*king.com.CandyCrushSodaSaga*"
-    "*Microsoft.DrawboardPDF*"
-    "*Facebook*"
-    "*BethesdaSoftworks.FalloutShelter*"
-    "*FarmVille2CountryEscape*"
-    "*Microsoft.WindowsFeedbackHub*"
-    "*Microsoft.GetHelp*"
-    "*Microsoft.Getstarted*"
-    "*Microsoft.ZuneMusic*"
-    "*Microsoft.WindowsMaps*"
-    "*Microsoft.Messaging"
-    "*Microsoft.Wallet*"
-    "*Microsoft.MicrosoftSolitaireCollection*"
-    "*Todos*"
-    "*ConnectivityStore*"
-    "*MinecraftUWP*"
-    "*Microsoft.OneConnect*"
-    "*Microsoft.BingFinance*"
-    "*Microsoft.ZuneVideo*"
-    "*Microsoft.BingNews*"
-    "*Microsoft.MicrosoftOfficeHub*"
-    "*Netflix*"
-    "*OneNote*"
-    #"*Microsoft.MSPaint*"
-    "*PandoraMediaInc*"
-    "*Microsoft.People*"
-    "*CommsPhone*"
-    "*windowsphone*"
-    "*Microsoft.Print3D*"
-    "*flaregamesGmbH.RoyalRevolt2*" 
-    "*WindowsScan*"
-    "*AutodeskSketchBook*"
-    "*Microsoft.SkypeApp*"
-    "*bingsports*"
-    "*Office.Sway*"
-    "*Microsoft.Getstarted*"
-    "*Microsoft3DViewer*"
-    "*Microsoft.WindowsSoundRecorder*"
-    "*Microsoft.BingWeather*"
-    "*Microsoft.XboxApp*"
-    "*XboxOneSmartGlass*"
-    "*Microsoft.XboxSpeechToTextOverlay*"
-    "*Microsoft.XboxIdentityProvider*"
-    "*Microsoft.XboxGameOverlay*"
-)
-
 
 Function Get-Recyclebin{
     [CmdletBinding()]
@@ -470,57 +414,6 @@ Function Erase-IExplorerHistory{
 }
 
 
-Function Remove-Bloatware{
-
-    Param
-    (
-        $ComputerOBJ
-    )
-
-    If($ComputerOBJ.PSRemoting -eq $true){
-        Write-Host "Attempting to remove bloatware" -ForegroundColor Yellow
-        $removebloatware = Invoke-command -ComputerName $ComputerOBJ.ComputerName -ScriptBlock {
-                        $ErrorActionPreference = 'Stop'
-                        Try{
-			                foreach ($App in $AppList) {
-    			                Get-AppxPackage -Name $App | Remove-AppxPackage -ErrorAction SilentlyContinue
-			                }
-                            $ErrorActionPreference = 'SilentlyContinue'
-                            #Write-Output $true
-                        }
-                        Catch [System.Exception]{
-                            $ErrorActionPreference = 'SilentlyContinue'
-                            #Write-output $False
-                        }
-                    } -Credential $ComputerOBJ.Credential
-
-        If($removebloatware -eq $True){
-            Write-Host "Bloatware has been successfully removed" -ForegroundColor Green
-        }
-        Else{
-            Write-host "Failed to remove bloatware" -ForegroundColor Red
-        }
-    }
-    Else{
-
-        Write-Host "Attempting to remove bloatware" -ForegroundColor Yellow
-        $ErrorActionPreference = 'Stop'
-        Try{
-            foreach ($App in $AppList) {
-	            Get-AppxPackage -Name $App | Remove-AppxPackage -ErrorAction SilentlyContinue
-	        }
-            Write-Host "Bloatware has been successfully removed" -ForegroundColor Green
-        }
-        Catch [System.Exception]{
-          Write-host "Failed to remove bloatware" -ForegroundColor Red
-        }
-        $ErrorActionPreference = 'SilentlyContinue'
-    }
-}
-
-
-
-
 # Windows computer cleanup tool
 
 
@@ -601,8 +494,6 @@ Echo ""
 Run-CleanMGR -ComputerOBJ $ComputerOBJ
 Echo ""
 Erase-IExplorerHistory -ComputerOBJ $ComputerOBJ
-Echo ""
-Remove-Bloatware -ComputerOBJ $ComputerOBJ
 Echo ""
 Get-Recyclebin -ComputerOBJ $ComputerOBJ
 Echo ""
