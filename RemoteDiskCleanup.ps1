@@ -1,8 +1,8 @@
 # Name: RemoteDiskCleanup.ps1                              
 # Creator: Myrianthi                
 # CreationDate: 11.26.2018                             
-# LastModified: 2.1.2019                               
-# Version: 2.3
+# LastModified: 8.9.2019                               
+# Version: 2.4
 # Doc: https://github.com/Myrianthi/remotediskcleanup
 # Purpose: Remote-access temp file removal
 # Requirements: Admin access, PS-Remoting enabled on remote devices
@@ -410,6 +410,56 @@ Function Erase-IExplorerHistory{
           Write-host "Failed to erase Internet Explorer temp data" -ForegroundColor Red
         }
         $ErrorActionPreference = 'SilentlyContinue'
+    }
+}
+
+Function Run-DISM{
+
+    Param
+    (
+        $ComputerOBJ
+    )
+
+    If($ComputerOBJ.PSRemoting -eq $true){
+    Write-Host "Running DISM to clean old servicepack files" -ForegroundColor Yellow
+    $DISM = Invoke-command -ComputerName $ComputerOBJ.ComputerName -ScriptBlock {
+                $ErrorActionPreference = 'Stop'
+                Try{
+                    $DISMResult = dism.exe /online /cleanup-Image /spsuperseded
+                    $ErrorActionPreference = 'SilentlyContinue'
+                    Write-Output $DISMResult
+                }
+                Catch [System.Exception]{
+                    $ErrorActionPreference = 'SilentlyContinue'
+                    Write-output $False
+                }
+                } -Credential $ComputerOBJ.Credential
+
+    If($DISM -match 'The operation completed successfully'){
+        Write-Host "DISM Completed Successfully." -ForegroundColor Green
+    }
+    Else{
+        Write-Host "Unable to clean old ServicePack Files." -ForegroundColor Red
+    }
+}
+    Else{
+        Write-Host "Running DISM to clean old servicepack files" -ForegroundColor Yellow
+        $ErrorActionPreference = 'Stop'
+        Try{
+            $DISMResult = dism.exe /online /cleanup-Image /spsuperseded
+            $ErrorActionPreference = 'SilentlyContinue'
+        }
+        Catch [System.Exception]{
+            $ErrorActionPreference = 'SilentlyContinue'
+            $DISMResult = $False
+        }
+        $ErrorActionPreference = 'SilentlyContinue'
+        If($DISMResult -match 'The operation completed successfully'){
+            Write-Host "DISM Completed Successfully." -ForegroundColor Green
+        }
+        Else{
+            Write-Host "Unable to clean old ServicePack Files." -ForegroundColor Red
+        }
     }
 }
 
