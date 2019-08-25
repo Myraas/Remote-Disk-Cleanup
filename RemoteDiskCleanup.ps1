@@ -545,12 +545,14 @@ Run-CleanMGR -ComputerOBJ $ComputerOBJ
 Echo ""
 Erase-IExplorerHistory -ComputerOBJ $ComputerOBJ
 Echo ""
+Run-DISM -ComputerOBJ $ComputerOBJ
+Echo ""
 Get-Recyclebin -ComputerOBJ $ComputerOBJ
 Echo ""
 
 # ADDING THIS SOON #
 #Wipe-Freespace
-
+#Winmgmt /salvagerepository
 
 Echo "********************************************************************************************************************"
 $ComputerOBJ = Get-FinalFreeSpace -ComputerOBJ $ComputerOBJ
