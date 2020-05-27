@@ -7,7 +7,7 @@
 # Purpose: Remote-access temp file removal
 # Requirements: Admin access, PS-Remoting enabled on remote devices
 
-# I am a novice PS scripter. I use this often in production, but please use caution and run at your own risk.
+# I am a novice PoSh scripter. I use this often in production, but please use caution and run at your own risk.
 
 # --------------------------- Script begins here --------------------------- #
 
