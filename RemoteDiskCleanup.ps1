@@ -461,17 +461,10 @@ Function Run-DISM{
     }
 }
 
-
-# Windows computer cleanup tool
-
-
 Clear-Host
-
 Echo "  **This tool will attempt to remove bloatware and erase temp files across all user profiles. Please use with caution.**"
 Echo ""
-
 $ComputerOBJ = Get-ComputerName
-
 Echo "You have entered $ComputerOBJ. Is this correct?"
 Pause
 Echo ""
@@ -499,7 +492,6 @@ Echo "**************************************************************************
 Echo ""
 
 #======================================================================================================================================================
-
 
 Write-Host "Cleaning temp directories across all user profiles" -ForegroundColor Yellow
 
