@@ -1,12 +1,13 @@
 # Name: RemoteDiskCleanup.ps1                              
 # Creator: Myrianthi                
 # CreationDate: 11.26.2018                             
-# LastModified: 8.9.2019                               
-# Version: 2.4
+# LastModified: 5.26.2020                               
+# Version: 2.5
 # Doc: https://github.com/Myrianthi/remotediskcleanup
 # Purpose: Remote-access temp file removal
 # Requirements: Admin access, PS-Remoting enabled on remote devices
-#
+
+# I am a novice PS scripter. I use this often in production, but please use caution and run at your own risk.
 
 # --------------------------- Script begins here --------------------------- #
 
