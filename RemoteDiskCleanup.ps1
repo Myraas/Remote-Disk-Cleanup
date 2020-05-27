@@ -32,10 +32,7 @@ $Locations = @(
     "Offline Pages Files"
     "Old ChkDsk Files"
     "Previous Installations"
-
-    # This is commented out because we already call a function in this script to wipe Recycle Bin contents older than 3 days.
     #"Recycle Bin"
-
     "Service Pack Cleanup"
     "Setup Log Files"
     "System error memory dump files"
@@ -513,26 +510,15 @@ Clean-path -Path 'C:\Users\*\Appdata\Local\Temp\*' -Verbose -ComputerOBJ $Comput
 Clean-path -Path 'C:\Users\*\AppData\Local\Microsoft\Windows\Temporary Internet Files\*' -Verbose -ComputerOBJ $ComputerOBJ
 Clean-path -Path 'C:\Users\*\AppData\Roaming\Microsoft\Windows\Cookies\*' -Verbose -ComputerOBJ $ComputerOBJ
 
+## Optional paths. Clean at your own risk.
 #Clean-path -Path 'C:\ServiceProfiles\LocalService\AppData\Local\Temp\*' -Verbose -ComputerOBJ $ComputerOBJ
-
-#####Only turned off because I don't want to hear complaints of programs taking too long to start#####
 #Clean-path -Path 'C:\Windows\Prefetch' -Verbose -ComputerOBJ $ComputerOBJ
-
-#####Internet Explorer Cache. Turned off Because I now have a function to clean it and therefore unneccesary to perform a hard reset#####
 #Clean-path -Path 'C:\Users\*\AppData\Local\Microsoft\Windows\INetCache'-Verbose -ComputerOBJ $ComputerOBJ
-
-#####Figured I would keep these because they don't take up too much space and some users might find their recent files convenient#####
 #Clean-Path -Path 'C:\Users\*\AppData\Roaming\Microsoft\Windows\Recent' -Verbose -ComputerOBJ $ComputerOBJ
 #Clean-Path -Path 'C:\AppData\Roaming\Microsoft\Windows\Recent' -Verbose -ComputerOBJ $ComputerOBJ
-
-#####Some reports of this messing up Chrome by forcing a hard reset of its cache. It apparently still tries to read from cache when it's been manually cleared#####
 #Clean-Path -Path 'C:\Users\*\AppData\Local\Google\Chrome\User Data\Default\Cache' -Verbose -ComputerOBJ $ComputerOBJ
-
-#####Completely wiping Mozilla Firefoxes Cache. Hard reset not tested yet...#####
 #Clean-Path -Path 'C:\Users\*\AppData\Local\Mozilla\Firefox\Profiles\*.default' -Verbose -ComputerOBJ $ComputerOBJ
 #Clean-Path -Path 'C:\Users\*\AppData\Roaming\Mozilla\Firefox\Profiles\*.default' -Verbose -ComputerOBJ $ComputerOBJ
-
-#####Error reporting and Debug information. Might come in handy to just keep this#####
 #Clean-path -Path 'C:\ProgramData\Microsoft\Windows\WER\ReportArchive' -Verbose -ComputerOBJ $ComputerOBJ
 #Clean-path -Path 'C:\ProgramData\Microsoft\Windows\WER\ReportQueue' -Verbose -ComputerOBJ $ComputerOBJ
 
@@ -543,16 +529,14 @@ Echo ""
 
 Run-CleanMGR -ComputerOBJ $ComputerOBJ
 Echo ""
-Erase-IExplorerHistory -ComputerOBJ $ComputerOBJ
+#Erase-IExplorerHistory -ComputerOBJ $ComputerOBJ
 Echo ""
 Run-DISM -ComputerOBJ $ComputerOBJ
 Echo ""
 Get-Recyclebin -ComputerOBJ $ComputerOBJ
 Echo ""
 
-# ADDING THIS SOON #
-#Wipe-Freespace
-#Winmgmt /salvagerepository
+Winmgmt /salvagerepository
 
 Echo "********************************************************************************************************************"
 $ComputerOBJ = Get-FinalFreeSpace -ComputerOBJ $ComputerOBJ
