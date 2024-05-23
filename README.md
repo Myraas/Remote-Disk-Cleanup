@@ -1,8 +1,49 @@
-# RemoteDiskCleanup
+## RemoteDiskCleanup
 
-RemoteDiskCleanup is a powershell script designed to remotely automate the process of:
-- cleaning temp file paths across all user profiles
-- erasing Internet Explorer, Mozilla Firefox, and Google Chrome browser caches
-- running Windows Disk Cleanup with sageset parameters
-- emptying out old recycling bin contents
-- logging the cleanup process and reporting space recovered
+**Description:**
+
+RemoteDiskCleanup is a PowerShell script designed to automate the process of cleaning temporary files and caches across all user profiles on a remote computer. This tool performs the following tasks:
+
+- Cleans temporary file paths across all user profiles.
+- Erases Internet Explorer, Mozilla Firefox, and Google Chrome browser caches.
+- Runs Windows Disk Cleanup with sageset parameters.
+- Empties old Recycle Bin contents.
+- Logs the cleanup process and reports the space recovered.
+
+**Features:**
+
+- **Local and Remote Execution:** The script can be executed locally or remotely using PowerShell remoting.
+- **Verbose Logging:** Provides detailed logging for the cleanup process, which can be enabled or disabled based on preference.
+- **WMI Repair:** Includes an option to repair the WMI repository if needed.
+- **Disk Cleanup Automation:** Automates the Windows Disk Cleanup utility with predefined sageset parameters.
+- **Cross-Browser Cache Cleaning:** Cleans caches for popular browsers including Internet Explorer, Mozilla Firefox, and Google Chrome.
+
+**Usage:**
+
+1. **Set Global Flags:**
+   - `$global:LocalRun` to `true` for local execution or `false` for remote execution.
+   - `$global:EnableVerbose` to `true` to enable verbose logging or `false` to disable it.
+   - `$global:RepairWMI` to `true` to enable WMI repair or `false` to disable it.
+
+2. **Run the Script:**
+   - Execute the script with administrative privileges.
+   - Follow the prompts to enter the computer name and credentials for remote execution.
+
+3. **Check Logs:**
+   - The script generates a log file in the `C:\temp\` directory with a timestamp and the computer name.
+
+## Example Command
+
+To execute the script locally with verbose logging and WMI repair enabled:
+
+```powershell
+# Set global flags
+$global:LocalRun = $true
+$global:EnableVerbose = $true
+$global:RepairWMI = $true
+
+# Run the script
+.\RemoteDiskCleanup.ps1
+
+## License
+This project is licensed under the terms of the GNU General Public License v3.0.
