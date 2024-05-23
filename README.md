@@ -29,20 +29,5 @@ RemoteDiskCleanup is a PowerShell script designed to automate the process of cle
    - Execute the script with administrative privileges.
    - Follow the prompts to enter the computer name and credentials for remote execution.
 
-3. **Check Logs:**
-   - The script generates a log file in the `C:\temp\` directory with a timestamp and the computer name.
-
-# Example Command
-
-To execute the script locally with verbose logging and WMI repair enabled:
-
-**Set global flags**
-$global:LocalRun = $true
-$global:EnableVerbose = $true
-$global:RepairWMI = $true
-
-**Run the script**
-.\RemoteDiskCleanup.ps1
-
 ## License
 This project is licensed under the terms of the GNU General Public License v3.0.
