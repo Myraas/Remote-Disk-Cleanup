@@ -32,7 +32,7 @@ RemoteDiskCleanup is a PowerShell script designed to automate the process of cle
 3. **Check Logs:**
    - The script generates a log file in the `C:\temp\` directory with a timestamp and the computer name.
 
-## Example Command
+# Example Command
 
 To execute the script locally with verbose logging and WMI repair enabled:
 
