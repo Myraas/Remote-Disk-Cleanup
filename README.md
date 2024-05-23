@@ -2,7 +2,7 @@
 
 **Description:**
 
-RemoteDiskCleanup is a PowerShell script designed to automate the process of cleaning temporary files and caches across all user profiles on a remote computer. This tool performs the following tasks:
+Remote-Disk-Cleanup is a PowerShell script designed to automate the process of cleaning temporary files and caches across all user profiles on a remote computer. This tool performs the following tasks:
 
 - Cleans temporary file paths across all user profiles.
 - Erases Internet Explorer, Mozilla Firefox, and Google Chrome browser caches.
