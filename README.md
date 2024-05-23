@@ -29,5 +29,8 @@ RemoteDiskCleanup is a PowerShell script designed to automate the process of cle
    - Execute the script with administrative privileges.
    - Follow the prompts to enter the computer name and credentials for remote execution.
 
+## Disclaimer
+Please note that while I have taken care to ensure the script works correctly, I am not responsible for any damage or issues that may arise from its use. Use this script at your own risk.
+
 ## License
 This project is licensed under the terms of the GNU General Public License v3.0.
