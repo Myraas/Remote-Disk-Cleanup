@@ -36,12 +36,12 @@ RemoteDiskCleanup is a PowerShell script designed to automate the process of cle
 
 To execute the script locally with verbose logging and WMI repair enabled:
 
-# Set global flags
+**Set global flags**
 $global:LocalRun = $true
 $global:EnableVerbose = $true
 $global:RepairWMI = $true
 
-# Run the script
+**Run the script**
 .\RemoteDiskCleanup.ps1
 
 ## License
