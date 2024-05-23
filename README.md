@@ -1,4 +1,4 @@
-## RemoteDiskCleanup
+## Remote-Disk-Cleanup
 
 **Description:**
 
