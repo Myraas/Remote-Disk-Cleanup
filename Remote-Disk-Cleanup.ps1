@@ -400,6 +400,37 @@ Function Run-DISM {
     }
 }
 
+Function Repair-WMIRepository {
+    [CmdletBinding()]
+    Param (
+        [Parameter(Mandatory=$true)]
+        $ComputerOBJ
+    )
+    If ($ComputerOBJ.PSRemoting -eq $true) {
+        Write-Host "Attempting to repair WMI repository remotely..." -ForegroundColor Yellow
+        Invoke-Command -ComputerName $ComputerOBJ.ComputerName -ScriptBlock {
+            $ErrorActionPreference = 'Stop'
+            Try {
+                cmd.exe /c "Winmgmt /salvagerepository"
+                $ErrorActionPreference = 'SilentlyContinue'
+            } Catch {
+                $ErrorActionPreference = 'SilentlyContinue'
+            }
+        } -Credential $ComputerOBJ.Credential
+        Write-Host "WMI repository repair command executed on remote machine." -ForegroundColor Green
+    } Else {
+        Write-Host "Attempting to repair WMI repository locally..." -ForegroundColor Yellow
+        $ErrorActionPreference = 'Stop'
+        Try {
+            cmd.exe /c "Winmgmt /salvagerepository"
+            Write-Host "WMI repository repaired successfully." -ForegroundColor Green
+        } Catch {
+            Write-Host "Failed to repair WMI repository." -ForegroundColor Red
+        }
+        $ErrorActionPreference = 'SilentlyContinue'
+    }
+}
+
 # Main script execution
 Clear-Host
 Write-Host "** This tool will attempt to erase temp files across all user profiles. Please use with caution. **" -ForegroundColor Yellow
@@ -487,7 +518,7 @@ Write-Host ""
 
 # Optionally repair WMI repository if needed
 if ($RepairWMI) {
-    Winmgmt /salvagerepository
+    Repair-WMIRepository -ComputerOBJ $ComputerOBJ
     Write-Host ""
 }
 
